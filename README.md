@@ -56,6 +56,43 @@ Additional Improvements**
 - Clearer display of hole information (par, distance, strokes)
 - Improved club selection interface
 - Score tracking per hole and overall scorecard
-- after this, we also need to add a function that deals with when the ball goes beyond the green. Our condition will be if you are beyond the green by 30 yards, the user will encounter a hazard that sends them back to the beginning of their current hole. 
+- after this, we also need to add a function that deals with when the ball goes beyond the green. Our condition will be if you are beyond the green by 30 yards, the user will encounter a hazard that sends them back to the beginning of their current hole.
+
+###Intermediate Changes (after the Update)
+- Hole Gameplay Loop (`play_hole`)
+  - Implemented a loop that allows the player to play an entire hole from tee to finish
+  - Continues prompting the user until the ball is in the hole
+
+- User Input for Club Selection
+  - Players can now choose a club by entering a number in the terminal
+  - Input validation has been added to handle invalid entries
+
+- Dynamic Shot Feedback
+  - After each shot, the game prints a message describing the result (fairway, rough, green, etc.)
+  - Uses a dictionary with `.get()` to safely handle all possible outcomes
+
+- Stroke Tracking
+  - The number of strokes per hole is now tracked and displayed when the hole is completed
+
+- Win Condition for Each Hole
+  - The game detects when the ball goes in the hole and ends the loop for that hole
+
+- Improved Visualization
+  - Added a distance progress bar that updates after each shot
+
+#Current Limitations
+
+- Only one hole can be played at a time (no full 9 or 18 hole loop yet)
+- Total score across multiple holes is not yet tracked
+- Club list is not displayed to the user during selection (planned improvement)
+
+Current questions we are considering:
+Do we need/use the rough key category of the clubs dictionary?
+We are letting player use putter in rough
+Delete rough key category last if not implemented
+If overshoot the hole (by more than 30 yds?, bc that's more than the green), you hit out of bounds (OB), so you reset each hole to restart (keep the score going, though)
+Add graphics to play_hole function
+Possibly adding holding down a key to decide how far the ball (percentage within each club’s range) went instead of randomness deciding it
+
 
 
