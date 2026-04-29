@@ -56,5 +56,6 @@ Additional Improvements**
 - Clearer display of hole information (par, distance, strokes)
 - Improved club selection interface
 - Score tracking per hole and overall scorecard
+- after this, we also need to add a function that deals with when the ball goes beyond the green. Our condition will be if you are beyond the green by 30 yards, the user will encounter a hazard that sends them back to the beginning of their current hole. 
 
 
