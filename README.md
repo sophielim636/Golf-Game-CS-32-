@@ -31,3 +31,30 @@ Currently we have coded:
 - Visual distance bar showing progress from tee to hole
 
 The game calculates where the ball lands after each shot and updates the player's situation accordingly.
+
+#Future plans!!
+1. Main Game Loop
+
+The main function will control the full 18-hole game. It will:
+- Display the game introduction
+- Iterate through all 18 holes
+- Track total strokes and score relative to par
+- Display a running score and final scorecard at the end
+
+2. Hole/Game Loop
+
+Each hole will have its own game loop where the player plays until the ball is in the hole. This loop will:
+- Prompt the player to choose a club each turn
+- Use predefined club distances and accuracy values
+- Call the shot outcome function to determine results
+- Update the player’s lie and remaining distance
+- Continue until the hole is completed
+
+Additional Improvements**
+
+- More detailed shot feedback after each swing
+- Clearer display of hole information (par, distance, strokes)
+- Improved club selection interface
+- Score tracking per hole and overall scorecard
+
+
