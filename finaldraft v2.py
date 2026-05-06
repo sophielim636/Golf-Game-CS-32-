@@ -397,11 +397,17 @@ def play_hole(hole_idx, total_strokes, total_par): #looks at what hole you're pl
         lie  = result
         dist = new_dist
 
-#_____sirina_______ main game loop
+#_____sophie_______ main game loop
+
 def main():
+    # prints welcome message
     print()
     print("  WELCOME TO GOLF 32 \u26F3\uFE0F")
+
+    # asks player to name the course
     name = input("  What would you like to name your golf course? ")
+
+    # prints course title and rules
     print()
     print(f"  Course: {name} GC  |  Par 32")
     print(f"\nRules of the game: \n\nThere are 8 holes on {name} golf course. " \
@@ -411,19 +417,32 @@ def main():
     " \nBe wary of hitting over the green, too. You might get sent all the way back to the tee box!" \
     "\n \nGood luck!")
 
+    # stores each hole score and running totals
     scores        = []
     total_strokes = 0
     total_par     = 0
 
+    # plays each hole one by one, starts loop from 0 to 7 for the 8 holes
     for i in range(len(HOLES)):
+        # prompts player to tee off
         input(f"\n  Press Enter to tee off on Hole {i + 1}...")
+
+        # plays the hole and stores the score
         s = play_hole(i, total_strokes, total_par)
+        # adds the score for this hole to the list of scores
         scores.append(s)
+
+        # updates total strokes and par
         total_strokes += s
+        # adds the par for this hole to the total par
         total_par     += HOLES[i]["par"]
+
         print_scorecard(scores)
 
+    # calculates final score compared to par
     diff = total_strokes - total_par
+
+    # prints round summary
     print()
     print("=" * 52)
     print("  ROUND COMPLETE")
@@ -431,11 +450,14 @@ def main():
     print(f"  Total strokes : {total_strokes}")
     print(f"  Par           : {total_par}")
     print(f"  Score         : {rel_str(diff)}")
+
+    # chooses a final verdict based on score
     if   diff <= -5: verdict = "Outstanding! You're a scratch golfer."
     elif diff <= -2: verdict = "Excellent round — well under par!"
     elif diff ==  0: verdict = "Solid golf — right on par!"
     elif diff <=  3: verdict = "Decent round. A few shots to clean up."
     else:            verdict = "Tough day on the course. Hit the range!"
+
     print(f"  Verdict       : {verdict}")
     print()
     print_scorecard(scores)
@@ -443,3 +465,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
