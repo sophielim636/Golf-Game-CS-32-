@@ -2,6 +2,11 @@
 Final project for CS32
 ## Python Golf is a text-based 9-hole stroke play golf game. Players choose clubs, hit shots, manage different lies like tee, fairway, rough, fringe, and green, and try to finish the course with the lowest score possible. The game tracks strokes, par, running score, and displays a scorecard after each hole.
 
+New learning situation: 
+- one is the power bar, imported sys and threading library. We used AI to learn about them (how/what we learned and how we implemented them is explained in the video).
+- Used AI for formatting of our dictionaries at the beginning.
+- Originally we were going to do key press method to choose our shot power. We used code online in an older version of the code, but instead elected for the power bar with number 0-10. The reason we didn't do an oscillating 0-10 is because we wanted to increase difficulty - when you try to hit it at power 10 (for maximum distance), there's a chance you hit it at 0 or 1, so it's high risk high reward.
+
 ## How to Run
 
 1. Make sure Python 3 is installed.
@@ -32,12 +37,12 @@ Currently we have coded:
 
 The game calculates where the ball lands after each shot and updates the player's situation accordingly.
 
-#Future plans!!
+
 1. Main Game Loop
 
-The main function will control the full 18-hole game. It will:
+The main function will control the full 8-hole game. It will:
 - Display the game introduction
-- Iterate through all 18 holes
+- Iterate through all 8 holes
 - Track total strokes and score relative to par
 - Display a running score and final scorecard at the end
 
@@ -45,31 +50,31 @@ The main function will control the full 18-hole game. It will:
 
 Each hole will have its own game loop where the player plays until the ball is in the hole. This loop will:
 - Prompt the player to choose a club each turn
-- Use predefined club distances and accuracy values
+- prompt player to hit enter to choose a 'power' from a fast moving scale of 0-10 to determine distance
+- Use predefined club distance ranges and accuracy values
 - Call the shot outcome function to determine results
 - Update the player’s lie and remaining distance
 - Continue until the hole is completed
 
-Additional Improvements**
-
-- More detailed shot feedback after each swing
 - Clearer display of hole information (par, distance, strokes)
-- Improved club selection interface
+- Club selection choices printed for player
 - Score tracking per hole and overall scorecard
-- after this, we also need to add a function that deals with when the ball goes beyond the green. Our condition will be if you are beyond the green by 30 yards, the user will encounter a hazard that sends them back to the beginning of their current hole.
+- if you are beyond the green by 30 yards, the user will be sent back to the beginning of their current hole
+- if you hit into a water hazard, your score will gain a penalty stroke of 1 and you'll be sent back to your previous shot.
+- water hazards are randomly generated (can be from 10 to 90 yards), we make sure they don't overlap with the tee box or the green.
+- there can be max 1 water hazard on the first 4 holes, and can be up to 2 water hazards on the second 4 holes (to increase difficulty)
 
-###Intermediate Changes (after the Update)
+
 - Hole Gameplay Loop (`play_hole`)
   - Implemented a loop that allows the player to play an entire hole from tee to finish
   - Continues prompting the user until the ball is in the hole
 
-- User Input for Club Selection
-  - Players can now choose a club by entering a number in the terminal
-  - Input validation has been added to handle invalid entries
+- Input for Club Selection
+  - Players can choose a club by entering a number in the terminal
+  - Difficulty in choosing power - trying to hit it at the right power
 
-- Dynamic Shot Feedback
+- After Shot 
   - After each shot, the game prints a message describing the result (fairway, rough, green, etc.)
-  - Uses a dictionary with `.get()` to safely handle all possible outcomes
 
 - Stroke Tracking
   - The number of strokes per hole is now tracked and displayed when the hole is completed
@@ -79,20 +84,4 @@ Additional Improvements**
 
 - Improved Visualization
   - Added a distance progress bar that updates after each shot
-
-#Current Limitations
-
-- Only one hole can be played at a time (no full 9 or 18 hole loop yet)
-- Total score across multiple holes is not yet tracked
-- Club list is not displayed to the user during selection (planned improvement)
-
-Current questions we are considering:
-Do we need/use the rough key category of the clubs dictionary?
-We are letting player use putter in rough
-Delete rough key category last if not implemented
-If overshoot the hole (by more than 30 yds?, bc that's more than the green), you hit out of bounds (OB), so you reset each hole to restart (keep the score going, though)
-Add graphics to play_hole function
-Possibly adding holding down a key to decide how far the ball (percentage within each club’s range) went instead of randomness deciding it
-
-
 
