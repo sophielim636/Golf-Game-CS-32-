@@ -1,10 +1,11 @@
-import random
-import time
-import sys
-import threading
+import random # used for random numbers like water hazard width, location, and shot accuracy
+import time # used to control the speed of the power meter
+import sys # used to update the power meter on the same line in the terminal
+import threading # lets the power meter run while the player waits to press Enter
 
 # ─── Clubs ────────────────────────────────────────────────────────────────────
 CLUBS = [
+    # each dictionary stores one club's name, icon, range, accuracy, and if it can be used in rough
     {"name": "Driver",        "icon": "1W", "range": (220, 280), "accuracy": 0.55, "rough": False},
     {"name": "3-iron",        "icon": "3i", "range": (170, 210), "accuracy": 0.65, "rough": True },
     {"name": "5-iron",        "icon": "5i", "range": (140, 175), "accuracy": 0.70, "rough": True },
@@ -17,6 +18,7 @@ CLUBS = [
 
 # ─── Course ───────────────────────────────────────────────────────────────────
 HOLES = [
+    # each hole has a par and a distance
     {"par": 4, "dist": 380},
     {"par": 3, "dist": 155},
     {"par": 3, "dist": 180},
@@ -27,6 +29,7 @@ HOLES = [
     {"par": 4, "dist": 400},
 ]
 
+# turns the code names for lies into nicer labels for printing
 LIE_LABELS = {
     "tee":      "Tee",
     "fairway":  "Fairway",
@@ -37,18 +40,31 @@ LIE_LABELS = {
 
 # ─── Helpers - sophie ──────────────────────────────────────────────────────────────────
 def rand(lo, hi):
+    # returns a random whole number between lo and hi
     return random.randint(lo, hi)
 
 def make_water_hazard(total_dist, width):
+    # water cannot start before 20 yards so it is not too close to the tee
     min_start = 20
+
+    # water must leave 90 yards after it ends, so this finds the latest start
     max_start = total_dist - 90 - width
+
+    # if there is not enough space for the water hazard, return None
     if max_start <= min_start:
         return None
+
+    # randomly chooses where the water hazard starts
     start = rand(min_start, max_start)
+
+    # returns the start and end position of the water hazard
     return {"start": start, "end": start + width}
 
 def score_str(strokes, par):
+    # finds how many strokes above or below par the player is
     diff = strokes - par
+
+    # matches score differences to golf names
     names = {
         -3: "Albatross",
         -2: "Eagle",
@@ -58,41 +74,67 @@ def score_str(strokes, par):
          2: "Double bogey",
          3: "Triple bogey",
     }
+
+    # gets the golf name, or shows the number if the score is not in the dictionary
     label = names.get(diff, f"{'+' if diff > 0 else ''}{diff}")
+
+    # returns the score as strokes plus the golf label
     return f"{strokes} ({label})"
 
 def rel_str(diff):
+    # if the score is even with par, show E
     if diff == 0:
         return "E"
+
+    # if over par add +, otherwise show the negative number
     return f"+{diff}" if diff > 0 else str(diff)
 
 def draw_bar(dist_remaining, total_dist, water=None, water2=None):
+    # makes the bar length based on the total distance of the hole
     width    = int((total_dist / 5) + 6)
+
+    # removes the extra display space to get the actual playable bar length
     hole     = width - 6
+
+    # calculates how far through the hole the ball is
     progress = max(0.0, min(1.0, 1 - dist_remaining / total_dist))
+
+    # converts the progress into a spot on the text bar
     ball_pos = int(progress * (hole - 1))
+
+    # creates the course bar using dots
     chars    = ["." for _ in range(hole)]
 
+    # fills in the course behind the ball with equals signs
     for i in range(ball_pos):
         if chars[i] == ".":
             chars[i] = "="
+
+    # draws the first water hazard if it exists
     if water:
         water_start = int((water["start"] / total_dist) * (hole - 1))
         water_end   = int((water["end"]   / total_dist) * (hole - 1))
         for i in range(water_start, min(water_end + 1, hole)):
             chars[i] = "~"
 
+    # draws the second water hazard if it exists
     if water2:
         water_start = int((water2["start"] / total_dist) * (hole - 1))
         water_end   = int((water2["end"]   / total_dist) * (hole - 1))
         for i in range(water_start, min(water_end + 1, hole)):
             chars[i] = "~"
 
+    # places the ball on the course bar
     chars[ball_pos] = "O"
+
+    # places the flag at the end unless the ball is already there
     if ball_pos != hole - 1:
         chars[hole - 1] = "⛳️"
 
+    # combines the characters into one full bar
     bar = "[" + "".join(chars) + "......]"
+
+    # returns the finished display with the water key
     return f"\n  {bar}\n  Tee {'':>{hole - 10}} \n  ~ = Water hazard"
 
 
@@ -281,26 +323,37 @@ def play_hole(hole_idx, total_strokes, total_par):
 
         # ── Water hazard - sophie──────────────────────────────────────────────
         for hazard in [water, water2]:
+            # only check hazards that exist, and ignore water if the ball went in the hole
             if hazard and result != "hole":
+                # calculates where the ball landed from the tee
                 landing_spot = hole["dist"] - new_dist
+
+                # checks if the landing spot is inside the hazard
                 if hazard["start"] <= landing_spot <= hazard["end"]:
                     print("\n  WATER HAZARD! Your ball went for a swim.")
                     print("  Adding a penalty stroke and returning you to previous shot.")
+
+                    # adds penalty stroke and returns to old distance
                     strokes += 1
                     dist = old_dist
                     break
+
+        # if no water hazard was hit, set hazard to None
         else:
             hazard = None
 
+        # if water was hit, restart the loop from the previous shot
         if hazard:
             continue
 
+        # if the result is hole, finish the hole
         if result == "hole":
             print(f"  *** IN THE HOLE! {club['name']} finds the cup! ***")
             print(f"  Hole complete in {strokes} stroke{'s' if strokes != 1 else ''}. {score_str(strokes, par)}")
             print(draw_bar(0, hole["dist"], water=water))
             return strokes
 
+        # messages for each possible result
         result_msgs = {
             "on-green":   f"  Nice shot! Ball is on the green — {new_dist}y to pin.",
             "fairway":    f"  Good strike! Sitting in the fairway — {new_dist}y remaining.",
@@ -308,8 +361,11 @@ def play_hole(hole_idx, total_strokes, total_par):
             "fringe":     f"  Ball rests on the fringe — {new_dist}y from the cup.",
             "miss-green": f"  Putt misses! Still {new_dist}y on the green.",
         }
+
+        # prints the correct result message
         print(result_msgs.get(result, f"  {new_dist}y remaining."))
 
+        # updates lie and distance for the next shot
         lie  = result
         dist = new_dist
 
