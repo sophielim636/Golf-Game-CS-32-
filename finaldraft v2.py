@@ -179,46 +179,62 @@ def shot_power_meter():
 def get_outcome(lie, club, dist, power_val):
     lo, hi = club["range"]
 
-    # 1 = lo yardage, 10 = hi yardage
+    #lower bound plus (the fraction of power (out of 10) you chose times range)
+    #on scale of 1-10 how much power within the club's range
     hit = int(lo + (((power_val) / 10) * (hi - lo)))
     print(f"\n  You hit the ball {hit} yards with your {club['name']}!")
 
-    if lie == "rough":
-        hit = int(hit * 0.80)
+    if lie == "rough":                   #when in the bad lie of the rough(taller grass),
+        hit = int(hit * 0.80)           #take off some distance (80% of what it would normally be)
 
-    new_dist = dist - hit
+    new_dist = dist - hit                 #new_dist is what you now have left
+
+    #lower accuracy in rough too (acc is how likely you are to be in fairway vs. rough)
     acc      = club["accuracy"] * (0.85 if lie == "rough" else 1.0)
+    
     roll     = random.random()
 
+    #some if statements for special cases:
+    #in each case, after you hit, it returns your lie and distance remaining to the hole
+
+    #if putting and hit past the hole, you make it
     if club["name"] == "Putter":
         if new_dist <= 0:
             return "hole", 0
+        #if you "roll" within the accuracy, on green
         if roll < acc:
             return "on-green", max(1,new_dist)
+        #otherwise missed green
         return "miss-green", max(3, new_dist)
 
+    #if you hit past the hole
     if new_dist <= 0:
+        #in the hole if within 4 yards
         if -4 <= new_dist <= 0:
             return "hole", 0
-
+        #Out of bounds and reset to tee box if hit over the green (> 30 yards past hole)
         if new_dist <= -30:
             return "tee", dist
-
+        #otherwise on green, that distance away
         return "on-green", abs(new_dist)
-
+    
+    #'gimme'/in the hole if within 4 yards
     if new_dist <= 4:
         return "hole", 0
 
+    #if you're on the green or fringe
     if new_dist <= 20:
         if roll < acc * 1.1:
             return "on-green", max(1, new_dist)
         return "fringe", max(5, new_dist)
 
+    #if you're on green or in fairway
     if new_dist <= 60:
         if roll < acc:
             return "fairway", new_dist
         return "rough", new_dist
 
+    #if you're in fairway or rough
     if roll < acc:
         return "fairway", new_dist
     if roll < acc + 0.15:
@@ -265,22 +281,24 @@ def print_scorecard(scores):
     print(f"  Total  : {total_s} strokes  ({rel_str(diff)} vs par {total_p})")
 
 # ─── Main game loop - sirina───────────────────────────────────────────────────────────
-def play_hole(hole_idx, total_strokes, total_par):
+def play_hole(hole_idx, total_strokes, total_par): #looks at what hole you're playing, the par so far, and your total strokes so far
     hole    = HOLES[hole_idx]
     par     = hole["par"]
     dist    = hole["dist"]
     lie     = "tee"
     strokes = 0
-    water   = make_water_hazard(hole["dist"],random.randint(10, 90))
+    water   = make_water_hazard(hole["dist"],random.randint(10, 90))  #2 water hazards possible
     water2  = make_water_hazard(hole["dist"], random.randint(10, 90))
 
     print(f"\n  >>> Hole {hole_idx + 1}  Par {par}  —  {dist}y  <<<")
 
     while True:
         print_header(hole_idx, par, dist, strokes, lie, total_strokes + strokes, total_par)
-        if hole_idx <= 2:
+        #one water possible on first 4 holes
+        if hole_idx <= 3:
             print(draw_bar(dist, hole["dist"], water=water, water2=None))
-        elif 3 <= hole_idx <= 7:
+        #2 water hazards possible on second 4 holes
+        elif 4 <= hole_idx <= 7:
             print(draw_bar(dist, hole["dist"], water=water, water2=water2))
 
         print_clubs()
@@ -289,15 +307,16 @@ def play_hole(hole_idx, total_strokes, total_par):
         while True:
             try:
                 raw    = input("\n  Choose club (number): ").strip()
-                choice = int(raw) - 1
+                choice = int(raw) - 1  #to match index
                 if not (0 <= choice < len(CLUBS)):
                     raise ValueError
             except ValueError:
                 print("  Please enter a valid club number.")
                 continue
 
-            club = CLUBS[choice]
+            club = CLUBS[choice]  #from dictionary
 
+            #club choice limitations
             if club["name"] == "Putter" and dist > 30:
                 print("  You can only putt from the green within 30y. Choose another club.")
                 continue
@@ -321,9 +340,11 @@ def play_hole(hole_idx, total_strokes, total_par):
         result, new_dist = get_outcome(lie, club, dist, power_val)
 
         # ── Out of bounds - sirina ─────────────────────────────────────────────
-        if result == "tee":
+        if result == "tee":  #result is tee when after you hit a shot, you get sent back, so it was OB
             print("\n  OUT OF BOUNDS! You hit too far past the hole.")
             print("  Your ball has been sent back to the tee box :(")
+
+            #dist remaining is now the hole distance again
             dist = hole["dist"]
             lie  = "tee"
             continue
