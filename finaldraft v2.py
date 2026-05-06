@@ -142,6 +142,8 @@ def draw_bar(dist_remaining, total_dist, water=None, water2=None):
 power_val     = 0
 power_stopped = False
 
+# cycles through numbers that correspond to shot power
+# removes previous number and replaces with new number every 0.12 seconds
 def power_animate():
     global power_val, power_stopped
     while not power_stopped:
@@ -152,6 +154,7 @@ def power_animate():
             power_val = 0
         time.sleep(0.12)
 
+# implements the actual interaction with the power meter and returns the power value
 def shot_power_meter():
     global power_val, power_stopped
     power_val     = 0
@@ -223,6 +226,7 @@ def get_outcome(lie, club, dist, power_val):
     return "rough", new_dist
 
 # ─── Display helpers - adrian ──────────────────────────────────────────────────────────
+# prints useful information to the player
 def print_header(hole_idx, par, dist, strokes, lie, total_strokes, total_par):
     total_diff = total_strokes - total_par
     print()
@@ -233,6 +237,7 @@ def print_header(hole_idx, par, dist, strokes, lie, total_strokes, total_par):
     print(f"  Current lie      : {LIE_LABELS.get(lie, lie)}")
     print(f"  Strokes this hole: {strokes}")
 
+# prints the club selection list
 def print_clubs():
     print()
     print("Clubs available:\n")
@@ -242,6 +247,7 @@ def print_clubs():
         lo, hi = c["range"]
         print(f"  {i+1:>2}  {c['name']:<16} {lo:>4}-{hi:<4}y  {int(c['accuracy'] * 100):>4}%")
 
+# prints the score
 def print_scorecard(scores):
     if not scores:
         return
@@ -303,6 +309,7 @@ def play_hole(hole_idx, total_strokes, total_par):
             break
 
         # ── Power meter - adrian ───────────────────────────────────────────────
+        # prints a guideline for the power meter and then gets the distance from the locked in power
         lo, hi = club["range"]
         print(f"  0 = {lo}y  ───────────────  10 = {hi}y")
 
