@@ -108,7 +108,7 @@ def power_animate():
         power_val += 1
         if power_val > 10:
             power_val = 0
-        time.sleep(0.7)
+        time.sleep(0.12)
 
 def shot_power_meter():
     global power_val, power_stopped
