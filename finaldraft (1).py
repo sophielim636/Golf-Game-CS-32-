@@ -1,4 +1,3 @@
-hi guys this is a test 
 import random
 import time
 import sys
