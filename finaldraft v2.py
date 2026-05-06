@@ -35,7 +35,7 @@ LIE_LABELS = {
     "fringe":   "Fringe",
 }
 
-# ─── Helpers ──────────────────────────────────────────────────────────────────
+# ─── Helpers - sophie ──────────────────────────────────────────────────────────────────
 def rand(lo, hi):
     return random.randint(lo, hi)
 
@@ -98,7 +98,7 @@ def draw_bar(dist_remaining, total_dist, water=None, water2=None):
     return f"\n  {bar}\n  Tee {'':>{hole - 10}} \n  ~ = Water hazard"
 
 
-# ─── Power Meter ──────────────────────────────────────────────────────────────
+# ─── Power Meter - adrian ──────────────────────────────────────────────────────────────
 power_val     = 0
 power_stopped = False
 
@@ -132,7 +132,7 @@ def shot_power_meter():
 
     return locked
 
-# ─── Shot outcome logic ───────────────────────────────────────────────────────
+# ─── Shot outcome logic - sirina ───────────────────────────────────────────────────────
 def get_outcome(lie, club, dist, power_val):
     lo, hi = club["range"]
 
@@ -166,7 +166,6 @@ def get_outcome(lie, club, dist, power_val):
     if new_dist <= 4:
         return "hole", 0
 
-
     if new_dist <= 20:
         if roll < acc * 1.1:
             return "on-green", max(1, new_dist)
@@ -183,7 +182,7 @@ def get_outcome(lie, club, dist, power_val):
         return "rough", new_dist
     return "rough", new_dist
 
-# ─── Display helpers ──────────────────────────────────────────────────────────
+# ─── Display helpers - adrian ──────────────────────────────────────────────────────────
 def print_header(hole_idx, par, dist, strokes, lie, total_strokes, total_par):
     total_diff = total_strokes - total_par
     print()
@@ -219,7 +218,7 @@ def print_scorecard(scores):
     diff    = total_s - total_p
     print(f"  Total  : {total_s} strokes  ({rel_str(diff)} vs par {total_p})")
 
-# ─── Main game loop ───────────────────────────────────────────────────────────
+# ─── Main game loop - sirina───────────────────────────────────────────────────────────
 def play_hole(hole_idx, total_strokes, total_par):
     hole    = HOLES[hole_idx]
     par     = hole["par"]
@@ -229,10 +228,7 @@ def play_hole(hole_idx, total_strokes, total_par):
     water   = make_water_hazard(hole["dist"],random.randint(10, 90))
     water2  = make_water_hazard(hole["dist"], random.randint(10, 90))
 
-
     print(f"\n  >>> Hole {hole_idx + 1}  Par {par}  —  {dist}y  <<<")
-
-
 
     while True:
         print_header(hole_idx, par, dist, strokes, lie, total_strokes + strokes, total_par)
@@ -243,7 +239,7 @@ def play_hole(hole_idx, total_strokes, total_par):
 
         print_clubs()
 
-        # ── Club selection ────────────────────────────────────────────
+        # ── Club selection - sirina ────────────────────────────────────────────
         while True:
             try:
                 raw    = input("\n  Choose club (number): ").strip()
@@ -266,7 +262,7 @@ def play_hole(hole_idx, total_strokes, total_par):
 
             break
 
-        # ── Power meter ───────────────────────────────────────────────
+        # ── Power meter - adrian ───────────────────────────────────────────────
         lo, hi = club["range"]
         print(f"  0 = {lo}y  ───────────────  10 = {hi}y")
 
@@ -277,7 +273,7 @@ def play_hole(hole_idx, total_strokes, total_par):
 
         result, new_dist = get_outcome(lie, club, dist, power_val)
 
-        # ── Out of bounds ─────────────────────────────────────────────
+        # ── Out of bounds - sirina ─────────────────────────────────────────────
         if result == "tee":
             print("\n  OUT OF BOUNDS! You hit too far past the hole.")
             print("  Your ball has been sent back to the tee box :(")
@@ -285,7 +281,7 @@ def play_hole(hole_idx, total_strokes, total_par):
             lie  = "tee"
             continue
 
-        # ── Water hazard ──────────────────────────────────────────────
+        # ── Water hazard - sophie──────────────────────────────────────────────
         for hazard in [water, water2]:
             if hazard and result != "hole":
                 landing_spot = hole["dist"] - new_dist
@@ -319,6 +315,7 @@ def play_hole(hole_idx, total_strokes, total_par):
         lie  = result
         dist = new_dist
 
+#_____sirina_______ main game loop
 def main():
     print()
     print("  WELCOME TO GOLF 32 \u26F3\uFE0F")
