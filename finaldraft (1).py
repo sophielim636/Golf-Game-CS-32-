@@ -19,10 +19,10 @@ CLUBS = [
 HOLES = [
     {"par": 4, "dist": 380},
     {"par": 3, "dist": 155},
-    {"par": 5, "dist": 510},
+    {"par": 3, "dist": 180},
     {"par": 4, "dist": 420},
     {"par": 4, "dist": 360},
-    {"par": 3, "dist": 180},
+    {"par": 5, "dist": 510},
     {"par": 5, "dist": 490},
     {"par": 4, "dist": 400},
 ]
