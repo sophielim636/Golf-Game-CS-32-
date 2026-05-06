@@ -88,8 +88,6 @@ def draw_bar(dist_remaining, total_dist, water=None, water2=None):
         for i in range(water_start, min(water_end + 1, hole)):
             chars[i] = "~"
 
-
-
     chars[ball_pos] = "O"
     if ball_pos != hole - 1:
         chars[hole - 1] = "⛳️"
